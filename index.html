@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakPro AI v4.0 - Advanced Speaking Assessment</title>
+    <meta name="description" content="AI-Powered English Speaking Assessment with Speech-to-Text transcription and personalized learning">
+    <meta name="author" content="Abduraxmon">
+    <style>
+        /* ==================== RESET & VARIABLES ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #b024ff;
+            --neon-pink: #ff006e;
+            --neon-green: #00ff88;
+            --neon-orange: #ff9500;
+            --neon-gold: #ffd700;
+            --dark-bg: #0a0a1a;
+            --card-bg: #1a1a2e;
+            --card-bg-light: #252545;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0c0;
+            --border-color: rgba(0, 243, 255, 0.2);
+        }
+
+        /* ==================== BODY ==================== */
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 20%, rgba(176, 36, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==================== HEADER ==================== */
+        .header {
+            text-align: center;
+            padding: 30px 0 25px;
+        }
+
+        .powered-by {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), rgba(176, 36, 255, 0.1));
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--neon-gold);
+        }
+
+        .powered-by .dev-name {
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--neon-gold), var(--neon-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            font-size: 42px;
+            filter: drop-shadow(0 0 15px var(--neon-blue));
+            animation: pulse 2s infinite;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .version-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-version {
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            color: #000;
+        }
+
+        .badge-ai {
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            color: #fff;
+        }
+
+        .badge-stt {
+            background: linear-gradient(90deg, var(--neon-orange), var(--neon-gold));
+            color: #000;
+        }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 22px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 22px;
+            text-align: center;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ==================== UPLOAD METHODS ==================== */
+        .upload-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .upload-method {
+            border: 2px dashed rgba(0, 243, 255, 0.25);
+            border-radius: 14px;
+            padding: 28px 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 243, 255, 0.02);
+        }
+
+        .upload-method:hover {
+            border-color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-method.active {
+            border-color: var(--neon-green);
+            border-style: solid;
+            background: rgba(0, 255, 136, 0.08);
+        }
+
+        .upload-method.dragover {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.12);
+            transform: scale(1.01);
+        }
+
+        .method-icon { font-size: 38px; margin-bottom: 10px; }
+        .method-title { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
+        .method-subtitle { font-size: 12px; color: var(--text-secondary); }
+
+        /* ==================== RECORDING ==================== */
+        .recording-controls {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 22px;
+            background: rgba(0, 243, 255, 0.03);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .recording-controls.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .record-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: white;
+            font-size: 36px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 0, 110, 0.4);
+            margin: 12px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .record-btn:hover { transform: scale(1.05); }
+        .record-btn.recording {
+            background: linear-gradient(135deg, #ff0000, #ff3333);
+            animation: recordPulse 1s infinite;
+        }
+
+        .recording-time {
+            font-size: 38px;
+            color: var(--neon-blue);
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            margin: 12px 0;
+        }
+
+        .recording-status { color: var(--text-secondary); font-size: 13px; }
+
+        /* ==================== LIVE TRANSCRIPTION ==================== */
+        #liveTranscription {
+            display: none;
+            margin-top: 18px;
+            background: rgba(176, 36, 255, 0.05);
+            border: 1px solid rgba(176, 36, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .live-transcription-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--neon-purple);
+            font-weight: 600;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff0000;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        .live-transcription-text {
+            min-height: 60px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        /* ==================== TOPIC & BUTTON ==================== */
+        .topic-selection { margin: 22px 0; }
+        .topic-selection label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .topic-select {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(0, 243, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .topic-select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+        }
+
+        .topic-select option {
+            background: var(--dark-bg);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            box-shadow: 0 4px 18px rgba(0, 243, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(0, 243, 255, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 13px 22px;
+            border: 1px solid var(--neon-purple);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(176, 36, 255, 0.12);
+            color: var(--neon-purple);
+            margin-top: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(176, 36, 255, 0.2);
+        }
+
+        /* ==================== STATS SECTION ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: rgba(0, 243, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-card.highlight {
+            background: rgba(0, 255, 136, 0.06);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        .stat-icon { font-size: 24px; margin-bottom: 6px; display: block; }
+        .stat-value { font-size: 22px; font-weight: bold; color: var(--neon-blue); display: block; }
+        .stat-label { font-size: 11px; color: var(--text-secondary); display: block; margin-top: 3px; }
+
+        .progress-trend {
+            padding: 12px 18px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .progress-trend.positive { background: rgba(0, 255, 136, 0.1); color: var(--neon-green); }
+        .progress-trend.negative { background: rgba(255, 0, 110, 0.1); color: var(--neon-pink); }
+        .progress-trend.neutral { background: rgba(0, 243, 255, 0.1); color: var(--neon-blue); }
+
+        /* ==================== BRAIN SECTION ==================== */
+        .brain-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .brain-stat {
+            background: rgba(176, 36, 255, 0.05);
+            border: 1px solid rgba(176, 36, 255, 0.15);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .brain-stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--neon-purple);
+            display: block;
+        }
+
+        .brain-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .brain-trend {
+            padding: 12px 18px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .brain-trend.improving { background: rgba(0, 255, 136, 0.1); }
+        .brain-trend.declining { background: rgba(255, 0, 110, 0.1); }
+        .brain-trend.stable { background: rgba(0, 243, 255, 0.1); }
+
+        .trend-icon { font-size: 22px; }
+        .trend-message { font-size: 14px; }
+
+        .brain-tips {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .brain-tips h4 {
+            margin-bottom: 10px;
+            color: var(--neon-gold);
+            font-size: 15px;
+        }
+
+        .brain-tips ul { list-style: none; }
+
+        .tip-item {
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            border-left: 3px solid var(--neon-blue);
+        }
+
+        .tip-item.tip-high { border-left-color: var(--neon-pink); }
+        .tip-item.tip-medium { border-left-color: var(--neon-orange); }
+
+        .brain-favorite {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .brain-favorite strong {
+            color: var(--neon-blue);
+        }
+
+        .brain-milestones h4 {
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: var(--neon-gold);
+        }
+
+        .milestone-item {
+            background: rgba(255, 215, 0, 0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+        }
+
+        .milestone-title {
+            font-weight: 600;
+            font-size: 14px;
+            display: block;
+        }
+
+        .milestone-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== LEVEL BADGE ==================== */
+        .level-badge {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .level-circle {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 35px rgba(0, 243, 255, 0.5);
+        }
+
+        .level-text {
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        .level-description {
+            font-size: 18px;
+            color: var(--neon-blue);
+            font-weight: 600;
+        }
+
+        /* ==================== SCORES ==================== */
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 25px 0;
+        }
+
+        .score-card {
+            background: rgba(0, 243, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .score-icon { font-size: 28px; margin-bottom: 10px; }
+        .score-card h3 { font-size: 14px; margin-bottom: 10px; }
+
+        .score-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0 6px;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 1s ease;
+            width: 0;
+        }
+
+        .score-fill.score-excellent { background: linear-gradient(90deg, var(--neon-green), var(--neon-blue)); }
+        .score-fill.score-good { background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); }
+        .score-fill.score-average { background: linear-gradient(90deg, var(--neon-orange), var(--neon-pink)); }
+        .score-fill.score-low { background: linear-gradient(90deg, var(--neon-pink), #ff4444); }
+
+        .score-value { font-size: 20px; font-weight: bold; text-align: center; color: var(--neon-green); }
+
+        /* ==================== FEEDBACK ==================== */
+        .feedback-section, .errors-section, .recommendations-section { margin: 25px 0; }
+
+        .feedback-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--neon-purple);
+        }
+
+        .feedback-content {
+            background: rgba(176, 36, 255, 0.03);
+            border: 1px solid rgba(176, 36, 255, 0.12);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .feedback-item {
+            margin-bottom: 18px;
+            padding: 15px;
+            background: rgba(0, 243, 255, 0.02);
+            border-radius: 10px;
+            border-left: 3px solid var(--neon-blue);
+        }
+
+        .feedback-item h4 { margin-bottom: 8px; color: var(--neon-blue); font-size: 15px; }
+        .feedback-item p { color: var(--text-secondary); font-size: 13px; margin-bottom: 6px; }
+        .feedback-item em { color: var(--text-primary); }
+
+        .issue {
+            color: var(--neon-pink);
+            font-size: 12px;
+            padding: 8px 12px;
+            background: rgba(255, 0, 110, 0.08);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .details {
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            background: rgba(0, 243, 255, 0.05);
+            border-radius: 6px;
+            margin-top: 6px;
+        }
+
+        .stats-line {
+            font-size: 12px;
+            color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.08);
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-top: 6px;
+        }
+
+        /* Transcription box */
+        .transcription-box {
+            border-left-color: var(--neon-purple);
+        }
+
+        .transcription-text {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.8;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+
+        .transcription-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .transcription-stats span {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .filler-warning {
+            background: rgba(255, 0, 110, 0.15) !important;
+            color: var(--neon-pink) !important;
+        }
+
+        /* ==================== ERRORS & RECOMMENDATIONS ==================== */
+        .error-item, .recommendation-item {
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+        }
+
+        .error-item {
+            background: rgba(255, 0, 110, 0.05);
+            border-left: 3px solid var(--neon-pink);
+        }
+
+        .error-item.severity-high { border-left-color: #ff0000; background: rgba(255, 0, 0, 0.06); }
+        .error-item.severity-medium { border-left-color: var(--neon-orange); }
+        .error-item.severity-low { border-left-color: var(--neon-blue); }
+
+        .recommendation-item {
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 3px solid var(--neon-green);
+        }
+
+        .recommendation-item.priority-high { border-left-color: var(--neon-pink); }
+        .recommendation-item.priority-medium { border-left-color: var(--neon-orange); }
+
+        .error-item h4, .recommendation-item h4 { margin-bottom: 8px; font-size: 15px; }
+
+        .rec-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .rec-badge, .priority-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .rec-badge { background: rgba(0, 243, 255, 0.12); color: var(--neon-blue); }
+        .priority-badge.high { background: rgba(255, 0, 110, 0.12); color: var(--neon-pink); }
+        .priority-badge.medium { background: rgba(255, 149, 0, 0.12); color: var(--neon-orange); }
+
+        .error-item ul, .recommendation-item ul {
+            margin-top: 8px;
+            padding-left: 18px;
+        }
+
+        .error-item li, .recommendation-item li {
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== STRENGTHS & WEAKNESSES ==================== */
+        .sw-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .sw-box {
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .sw-box.strengths {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+        }
+
+        .sw-box.weaknesses {
+            background: rgba(255, 0, 110, 0.05);
+            border: 1px solid rgba(255, 0, 110, 0.15);
+        }
+
+        .sw-box h4 { margin-bottom: 10px; font-size: 14px; }
+        .sw-box ul { list-style: none; }
+        .sw-box li { padding: 5px 0; font-size: 13px; color: var(--text-secondary); }
+
+        /* ==================== HISTORY ==================== */
+        .history-list { display: grid; gap: 12px; }
+
+        .history-item {
+            background: rgba(0, 243, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            border-color: var(--neon-blue);
+            transform: translateX(3px);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .history-date { font-size: 12px; color: var(--text-secondary); }
+
+        .history-level {
+            font-weight: bold;
+            font-size: 16px;
+            padding: 3px 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+        }
+
+        .history-topic { font-size: 13px; margin-bottom: 6px; }
+        .history-score {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .overall-score { font-weight: 600; color: var(--neon-green); }
+        .transcribed-badge {
+            background: rgba(176, 36, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-play { background: linear-gradient(90deg, var(--neon-green), var(--neon-blue)); color: #000; }
+        .btn-view { background: rgba(176, 36, 255, 0.15); color: var(--neon-purple); border: 1px solid var(--neon-purple); }
+        .btn-delete { background: rgba(255, 0, 110, 0.12); color: var(--neon-pink); }
+
+        .btn-small:hover { transform: translateY(-1px); }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; display: block; }
+
+        /* ==================== LOADING ==================== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 26, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active { display: flex; }
+
+        .loading-spinner {
+            width: 65px;
+            height: 65px;
+            border: 4px solid rgba(0, 243, 255, 0.2);
+            border-top-color: var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 22px;
+            font-size: 20px;
+            color: var(--neon-blue);
+        }
+
+        .loading-subtext {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== NOTIFICATIONS ==================== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 14px 22px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 10000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            max-width: 380px;
+        }
+
+        .notification.show { transform: translateX(0); }
+
+        .notification-error {
+            background: linear-gradient(90deg, #ff4444, var(--neon-pink));
+            color: white;
+        }
+
+        .notification-success {
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            color: #000;
+        }
+
+        /* ==================== MILESTONE POPUP ==================== */
+        .milestone-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--card-bg);
+            border: 2px solid var(--neon-gold);
+            border-radius: 20px;
+            padding: 30px 40px;
+            text-align: center;
+            z-index: 10001;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .milestone-popup.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .milestone-popup .milestone-icon { font-size: 50px; margin-bottom: 15px; }
+        .milestone-popup .milestone-title { font-size: 22px; font-weight: bold; color: var(--neon-gold); }
+        .milestone-popup .milestone-desc { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .footer-brand {
+            background: linear-gradient(90deg, var(--neon-gold), var(--neon-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes recordPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.7); }
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 30px; }
+            .card { padding: 22px; }
+            .upload-methods { grid-template-columns: 1fr; }
+            .stats-grid, .brain-stats { grid-template-columns: 1fr 1fr; }
+            .scores-grid { grid-template-columns: 1fr 1fr; }
+            .sw-grid { grid-template-columns: 1fr; }
+            .level-circle { width: 100px; height: 100px; }
+            .level-text { font-size: 32px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid, .brain-stats { grid-template-columns: 1fr; }
+            .scores-grid { grid-template-columns: 1fr; }
+            .version-badges { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="powered-by">
+                <span>⚡ Powered by</span>
+                <span class="dev-name">Abduraxmon</span>
+            </div>
+            
+            <div class="logo">
+                <span class="logo-icon">🎯</span>
+                <h1>SpeakPro AI</h1>
+            </div>
+            <p class="tagline">Advanced AI-Powered Speaking Assessment Platform</p>
+            
+            <div class="version-badges">
+                <span class="badge badge-version">v4.0</span>
+                <span class="badge badge-ai">🧠 AI Learning</span>
+                <span class="badge badge-stt">📝 Speech-to-Text</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- Statistics Section -->
+            <section class="card" id="statsSection" style="display: none;"></section>
+
+            <!-- Brain Insights Section -->
+            <section class="card" id="brainSection" style="display: none;"></section>
+
+            <!-- Upload Section -->
+            <section class="card">
+                <h2 class="section-title">🎤 Start Assessment</h2>
+                
+                <div class="upload-methods">
+                    <div class="upload-method" id="uploadMethod">
+                        <div class="method-icon">📁</div>
+                        <div class="method-title">Upload Audio File</div>
+                        <div class="method-subtitle">Drag & drop or click</div>
+                        <input type="file" id="audioFile" accept="audio/*" hidden>
+                    </div>
+                    
+                    <div class="upload-method" id="recordMethod">
+                        <div class="method-icon">🎤</div>
+                        <div class="method-title">Live Recording</div>
+                        <div class="method-subtitle">With speech-to-text</div>
+                    </div>
+                </div>
+
+                <div class="recording-controls" id="recordingControls">
+                    <button class="record-btn" id="recordBtn">🎙️</button>
+                    <div class="recording-time" id="recordingTime">00:00</div>
+                    <div class="recording-status" id="recordingStatus">Click to start recording</div>
+                </div>
+
+                <div id="liveTranscription"></div>
+
+                <div class="topic-selection">
+                    <label for="topicSelect">Select Speaking Topic:</label>
+                    <select class="topic-select" id="topicSelect">
+                        <option value="">Choose a topic...</option>
+                        <option value="introduction">Self Introduction</option>
+                        <option value="education">Education & Learning</option>
+                        <option value="work">Work & Career</option>
+                        <option value="technology">Technology</option>
+                        <option value="environment">Environment & Nature</option>
+                        <option value="health">Health & Lifestyle</option>
+                        <option value="travel">Travel & Culture</option>
+                        <option value="sports">Sports & Hobbies</option>
+                        <option value="food">Food & Cooking</option>
+                        <option value="custom">Custom Topic</option>
+                    </select>
+                </div>
+
+                <button class="btn-primary" id="analyzeBtn" disabled>
+                    🚀 Analyze My Speaking
+                </button>
+            </section>
+
+            <!-- Results Section -->
+            <section class="card" id="resultsSection" style="display: none;">
+                <h2 class="section-title">📋 Assessment Results</h2>
+                
+                <div class="level-badge">
+                    <div class="level-circle">
+                        <span class="level-text" id="levelText">B2</span>
+                    </div>
+                    <p class="level-description" id="levelDescription">Upper Intermediate</p>
+                </div>
+
+                <div class="scores-grid">
+                    <div class="score-card">
+                        <div class="score-icon">🗣️</div>
+                        <h3>Pronunciation</h3>
+                        <div class="score-bar"><div class="score-fill" id="pronunciationScore"></div></div>
+                        <p class="score-value" id="pronunciationValue">0%</p>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-icon">📝</div>
+                        <h3>Vocabulary</h3>
+                        <div class="score-bar"><div class="score-fill" id="vocabularyScore"></div></div>
+                        <p class="score-value" id="vocabularyValue">0%</p>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-icon">⚡</div>
+                        <h3>Fluency</h3>
+                        <div class="score-bar"><div class="score-fill" id="fluencyScore"></div></div>
+                        <p class="score-value" id="fluencyValue">0%</p>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-icon">🎯</div>
+                        <h3>Grammar</h3>
+                        <div class="score-bar"><div class="score-fill" id="grammarScore"></div></div>
+                        <p class="score-value" id="grammarValue">0%</p>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-icon">⏱️</div>
+                        <h3>Time</h3>
+                        <div class="score-bar"><div class="score-fill" id="timeScore"></div></div>
+                        <p class="score-value" id="timeValue">0%</p>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-icon">💡</div>
+                        <h3>Coherence</h3>
+                        <div class="score-bar"><div class="score-fill" id="coherenceScore"></div></div>
+                        <p class="score-value" id="coherenceValue">0%</p>
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <h3 class="feedback-title">💪 Strengths & Focus Areas</h3>
+                    <div id="strengthsWeaknesses"></div>
+                </div>
+
+                <div class="feedback-section">
+                    <h3 class="feedback-title">📋 Detailed Feedback</h3>
+                    <div class="feedback-content" id="feedbackContent"></div>
+                </div>
+
+                <div class="errors-section">
+                    <h3 class="feedback-title">⚠️ Issues to Address</h3>
+                    <div id="errorsList"></div>
+                </div>
+
+                <div class="recommendations-section">
+                    <h3 class="feedback-title">💡 Personalized Recommendations</h3>
+                    <div id="recommendationsList"></div>
+                </div>
+
+                <button class="btn-secondary" id="newTestBtn">🔄 Start New Assessment</button>
+            </section>
+
+            <!-- History Section -->
+            <section class="card">
+                <h2 class="section-title">📚 Assessment History</h2>
+                <div class="history-list" id="historyList">
+                    <div class="empty-state">
+                        <span class="empty-icon">🎤</span>
+                        <p>No assessments yet. Start your first test!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            Made with ❤️ by <span class="footer-brand">Abduraxmon</span> | SpeakPro AI v4.0
+        </footer>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Analyzing your speaking...</p>
+            <p class="loading-subtext">Processing audio, transcription & AI analysis</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="storage.js"></script>
+    <script src="audio-processor.js"></script>
+    <script src="transcriber.js"></script>
+    <script src="brain.js"></script>
+    <script src="ai-analyzer.js"></script>
+    <script src="ui-controller.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
